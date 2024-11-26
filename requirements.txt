@@ -1,0 +1,7 @@
+nfstream
+scikit-learn
+seaborn
+numpy
+pandas
+wheel
+types
