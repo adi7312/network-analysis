@@ -9,10 +9,11 @@ class Analyzer:
         self.report = Report()
     
     def detect_large_traffic(self):
-        if ((self.packet_stream.destination_port == 443 or
-            self.packet_stream.destination_port == 80) and 
-            self.packet_stream.bytes > 1000000):
-            self.report.add_alert("WARNING", "Large Traffic Detected", self.packet_stream.timestamp, self.packet_stream.to_dict())
+        for flow in self.packet_stream:
+            if ((flow.dst_port == 443 or
+                flow.dst_port == 80) and 
+                flow.src2dst_bytes > 1000000):
+                self.report.add_alert("WARNING", "Large Traffic Detected", flow.bidirectional_first_seen_ms, {"flow": "data"})
     
 
 if __name__ == "__main__":
