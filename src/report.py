@@ -2,6 +2,8 @@ import json
 from typing import List, Dict
 from uuid import uuid4
 import time
+from os import environ
+import requests
 
 class Report:
     def __init__(self) -> None:
@@ -34,7 +36,25 @@ class Report:
             "timestamp": timestamp,
             "data": raw_data
         }
+        if (alert_type == "MALICIOUS_DNS"):
+            self.dns_enrichment(entry)
         self.alerts.append(entry)
+
+    def dns_enrichment(self, alert: Dict) -> None:
+        # Requirement E.1
+        domain = alert["data"]["domain"]
+        url = f"https://www.virustotal.com/api/v3/domains/{domain}"
+        headers = {
+            "accept": "application/json",
+            "x-apikey": environ.get("VT_API_KEY")
+        }
+        response = requests.get(url, headers=headers)
+        alert["data"]["last_https_certificate"] = response.json()["data"]["attributes"]["last_https_certificate"]
+        alert["data"]["whois"] = response.json()["data"]["attributes"]["whois"]
+        alert["data"]["last_dns_records"] = response.json()["data"]["attributes"]["last_dns_records"]
+        alert["data"]["last_analysis_stats"] = response.json()["data"]["attributes"]["last_analysis_stats"]
+
+
 
 
     def to_dict(self) -> Dict:
