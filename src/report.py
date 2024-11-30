@@ -6,7 +6,7 @@ import time
 class Report:
     def __init__(self) -> None:
         self.report_id: str = str(uuid4())
-        self.timestamp: int = int(time.time())
+        self.timestamp: int = int(time.time() * 1000)
         self.flow_metadata: List = []
         self.alerts: List = []
 
