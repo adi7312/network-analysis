@@ -2,3 +2,8 @@
 venv
 src/__pycache__
 test.pcap
+src/confusion_matrix.png
+src/ml_tree.png
+src/threats_pie.png
+src/mal5.pcap
+src/normal_traffic.pcap
