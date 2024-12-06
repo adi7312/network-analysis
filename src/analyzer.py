@@ -43,17 +43,13 @@ class Analyzer:
                     self.report.add_alert("MALICIOUS_DNS", "Malicious domain detected", int(packet.time), {"domain": domain})
 
     def detect_denial_of_service(self):
+        reported_ips = []
         for flow in self.mal_network_flow_stream:
-            src_ip = flow.src_ip
-            dst_ip = flow.dst_ip
-            tmp_src_ip = ""
-            tmp_dst_ip = ""
             if flow.bidirectional_bytes > 100_000:
-                if src_ip != tmp_src_ip and dst_ip != tmp_dst_ip:
-                    tmp_src_ip = src_ip
-                    tmp_dst_ip = dst_ip
+                ip_pair = (flow.src_ip, flow.dst_ip)
+                if ip_pair not in reported_ips:
                     self.report.add_alert("DOS", "Denial of Service detected", int(flow.bidirectional_first_seen_ms), {"src_ip": flow.src_ip, "dst_ip": flow.dst_ip})
-
+                    reported_ips.append(ip_pair)
 
 
     def apply_sigma_rules(self):
