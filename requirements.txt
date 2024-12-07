@@ -7,4 +7,3 @@ wheel
 typing
 pyshark
 scapy
-pysigma
