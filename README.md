@@ -5,6 +5,10 @@
 pip install -r requirements.txt
 ```
 
+```
+python3 nids.py --help
+```
+
 
 ---
 

@@ -17,6 +17,7 @@ class Report:
         self.alerts: Dict = {}
         self._ml_info: Dict = {}
         self._suspicious_ips: List = []
+        self.path: str = "nids_report.json"
 
     def add_flow_statistic(self, src_ip: str, dst_ip: str, src_port: int, dst_port: int, protocol: str, src2dst_bytes: int, dst2src_bytes: int, bidirectional_bytes: int, bidirectional_packets: int, bidirectional_duration_ms: int, bidirectional_first_seen_ms: int, bidirectional_last_seen_ms: int) -> None:
         flow_statistic = {
@@ -132,8 +133,8 @@ class Report:
         }
 
     def to_json(self):
-        self.visualize_ml_tree()
-        self.visualize_ml_confusion_matrix()
-        self.visualize_threats()
-        self.visualize_threat_map()
         return json.dumps(self.to_dict(), indent=4)
+    
+    def save_report_to_json(self):
+        with open(self.path, "w") as f:
+            f.write(self.to_json())

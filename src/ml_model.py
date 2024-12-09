@@ -55,7 +55,6 @@ class MLModel():
         
         predictions = tree_model.predict(X_test)
         self.accuracy = accuracy_score(Y_test, predictions)
-        print("Accuracy: ", self.accuracy)
         self.conf_matrix = confusion_matrix(Y_test, predictions)
         self.recall = self.conf_matrix[1][1] / (self.conf_matrix[1][0] + self.conf_matrix[1][1])
         self.precision = self.conf_matrix[1][1] / (self.conf_matrix[0][1] + self.conf_matrix[1][1])

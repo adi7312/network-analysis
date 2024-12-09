@@ -7,7 +7,7 @@ class Sigma:
         self.report = report
         self._apply_sigma_posh_rule()
     
-    def _load_sigma_posh_rule(self, sigma_rules_path="sigma_rules/detect_powershell_http.yml"):
+    def _load_sigma_posh_rule(self, sigma_rules_path="src/sigma_rules/detect_powershell_http.yml"):
         # Requirement D.2
         with open(sigma_rules_path) as f:
             try:

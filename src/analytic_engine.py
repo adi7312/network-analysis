@@ -1,30 +1,35 @@
 from nfstream import NFStreamer
-from report import Report
+from src.report import Report
 from scapy.all import *
-from ml_model import MLModel
-from sigma import Sigma
+from src.ml_model import MLModel
+from src.sigma import Sigma
 
 
-class Analyzer:
+class AnalyticEngine:
 
-    def __init__(self, malicious_pcap_filename: str, normal_pcap_filename=None) -> None:
+    def __init__(self, malicious_stream: str, normal_stream: str) -> None:
         # Requirement A.1
-        self.mal_network_flow_stream = NFStreamer(source=malicious_pcap_filename, statistical_analysis=True)
-        if normal_pcap_filename is not None:
-            self.norm_network_flow_stream = NFStreamer(source=normal_pcap_filename, statistical_analysis=True)
-        self.scapy_packets = rdpcap(malicious_pcap_filename)
+        self.mal_network_flow_stream = NFStreamer(source=malicious_stream, statistical_analysis=True)
+        self.norm_network_flow_stream = NFStreamer(source=normal_stream, statistical_analysis=True)
+        self.scapy_packets = rdpcap(malicious_stream)
         self.report = Report()
+        self.blacklist = self._load_suspicious_domains()
         self.ml_model = self._build_ml_model()
-        self.sigma = Sigma(self.scapy_packets, self.report)
-        
 
+        self.get_flow_statistics()
+        self.detect_suspicious_domains(self.blacklist)
+        self.detect_denial_of_service()
+        self.sigma = Sigma(self.scapy_packets, self.report)
+    
 
     def _build_ml_model(self):
         model = MLModel(self.norm_network_flow_stream, self.mal_network_flow_stream)
-        print(model.accuracy)
         self.report.add_ml_info(model.X_train, model.tree_model, model.accuracy, model.conf_matrix, model.recall, model.precision)
     
-    
+    def _load_suspicious_domains(self):
+        with open("src/utils/blacklist.txt") as f:
+            return f.readlines()
+
     def detect_suspicious_domains(self, blacklist):
         # Requirement D.1
         for packet in self.scapy_packets:
@@ -56,13 +61,4 @@ class Analyzer:
                 flow.bidirectional_first_seen_ms, flow.bidirectional_last_seen_ms
             )
             
-  
-
-if __name__ == "__main__":
-    # mal5.pcap: https://malware-traffic-analysis.net/2024/05/14/index.html
-    # normal_traffic.pcap: previous lab
-    analyzer = Analyzer(malicious_pcap_filename="mal5.pcap", normal_pcap_filename="normal_traffic.pcap")
-    analyzer.get_flow_statistics()
-    analyzer.detect_suspicious_domains(["www.rockcreekdds.com", "flexiblemaria.com"])
-    analyzer.detect_denial_of_service()
-    print(analyzer.report.to_json())
+    
