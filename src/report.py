@@ -7,6 +7,7 @@ import requests
 import seaborn as sns
 from sklearn.tree import plot_tree
 import matplotlib.pyplot as plt
+import folium
 
 class Report:
     def __init__(self) -> None:
@@ -15,6 +16,7 @@ class Report:
         self.flow_metadata: List = []
         self.alerts: Dict = {}
         self._ml_info: Dict = {}
+        self._suspicious_ips: List = []
 
     def add_flow_statistic(self, src_ip: str, dst_ip: str, src_port: int, dst_port: int, protocol: str, src2dst_bytes: int, dst2src_bytes: int, bidirectional_bytes: int, bidirectional_packets: int, bidirectional_duration_ms: int, bidirectional_first_seen_ms: int, bidirectional_last_seen_ms: int) -> None:
         flow_statistic = {
@@ -94,6 +96,22 @@ class Report:
         alert["data"]["last_dns_records"] = response.json()["data"]["attributes"]["last_dns_records"]
         alert["data"]["last_analysis_stats"] = response.json()["data"]["attributes"]["last_analysis_stats"]
 
+    def _get_location(self, ip: str) -> tuple:
+        data = requests.get(f"https://geolocation-db.com/json/{ip}&position=true").json()
+        return data["latitude"], data["longitude"]
+    
+    def visualize_threat_map(self):
+        map = folium.Map(location = [0.0, 0.0], zoom_start=3, zoom_control=False,scrollWheelZoom=False,dragging=False)
+        feature_group = folium.FeatureGroup("Threats")
+        for ip in self._suspicious_ips:
+            lat, long = self._get_location(ip)
+            if type(lat) != float or type(long) != float:
+                continue
+            feature_group.add_child(folium.Marker([lat, long], popup=ip))
+        map.add_child(feature_group)
+        map.save("threat_map.html")
+                
+
     def parase_to_md(self):
         title = f"# Network Report {self.report_id}"
 
@@ -117,4 +135,5 @@ class Report:
         self.visualize_ml_tree()
         self.visualize_ml_confusion_matrix()
         self.visualize_threats()
+        self.visualize_threat_map()
         return json.dumps(self.to_dict(), indent=4)

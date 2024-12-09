@@ -33,6 +33,7 @@ class Analyzer:
                 # check domain wasnt already reported
                 if domain in blacklist and self.report.alerts.get("MALICIOUS_DNS") is None:
                     self.report.add_alert("MALICIOUS_DNS", "Malicious domain detected", int(packet.time), {"domain": domain})
+                    self.report._suspicious_ips.append(packet[IP].dst)
 
     def detect_denial_of_service(self):
         reported_ips = []
@@ -42,6 +43,8 @@ class Analyzer:
                 if ip_pair not in reported_ips:
                     self.report.add_alert("DOS", "Denial of Service detected", int(flow.bidirectional_first_seen_ms), {"src_ip": flow.src_ip, "dst_ip": flow.dst_ip})
                     reported_ips.append(ip_pair)
+                    if flow.src_ip not in self.report._suspicious_ips or flow.dst_ip not in self.report._suspicious_ips:
+                        self.report._suspicious_ips.append(flow.src_ip)
 
     def get_flow_statistics(self):
         # Requirement A.2
