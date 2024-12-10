@@ -2,8 +2,8 @@ import click
 from src.analytic_engine import AnalyticEngine
 
 @click.command()
-@click.option('-mf','--malicious-pcap', required=True, help='Path to malicious PCAP file')
-@click.option('-nf','--normal-pcap', help='Path to normal PCAP file')
+@click.option('-f','--pcapfile', required=True, help='Path to PCAP file')
+@click.option('-nf','--normal-pcap', help='Path to clear PCAP file - useful for training ML model')
 @click.option('-o','--output', help='Path to output report file')
 @click.option('-ml','--ml-model', help='Show ML model visualization and save it to file', is_flag=True)
 @click.option('-cm','--confusion-matrix', help='Show confusion matrix and save it to file', is_flag=True)
@@ -11,10 +11,10 @@ from src.analytic_engine import AnalyticEngine
 @click.option('-tmap','--threats-map', help='Save threat map to file', is_flag=True)
 @click.option('-p','--print-report', help='Print report', is_flag=True)
 @click.option('-a','--all', help='Show all visualizations', is_flag=True)
-def cli(malicious_pcap, normal_pcap, output, ml_model, confusion_matrix, threats_pie, threats_map, all, print_report):
+def cli(pcapfile, normal_pcap, output, ml_model, confusion_matrix, threats_pie, threats_map, all, print_report):
     if not normal_pcap:
         normal_pcap = "src/utils/normal_traffic.pcap"
-    engine = AnalyticEngine(malicious_stream=malicious_pcap, normal_stream=normal_pcap)
+    engine = AnalyticEngine(malicious_stream=pcapfile, normal_stream=normal_pcap)
     if output:
         engine.report.path = output
     if ml_model or all:

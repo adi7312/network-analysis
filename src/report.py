@@ -21,7 +21,6 @@ class Report:
 
     def add_flow_statistic(self, src_ip: str, dst_ip: str, src_port: int, dst_port: int, protocol: str, src2dst_bytes: int, dst2src_bytes: int, bidirectional_bytes: int, bidirectional_packets: int, bidirectional_duration_ms: int, bidirectional_first_seen_ms: int, bidirectional_last_seen_ms: int) -> None:
         flow_statistic = {
-            "type": "normal",
             "src_ip": src_ip,
             "dst_ip": dst_ip,
             "src_port": src_port,
