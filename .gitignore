@@ -11,3 +11,5 @@ threat_map.html
 test.json
 *.html
 *.json
+add_mal.pcap
+add_norm.pcap

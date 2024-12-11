@@ -29,7 +29,10 @@ class Sigma:
                     if rule.get("detection"):
                         for command in rule["detection"]["selection"]["CommandLine|contains"]:
                             if command in raw_data:
-                                self.report.add_alert("COMMAND_EXECUTION", "Command execution detected by Sigma", int(packet.time), {"rule": rule["title"], "command": command})
+                                self.report.add_alert(
+                                    "COMMAND_EXECUTION",
+                                    "Command execution detected by Sigma",
+                                    int(packet.time), {"rule": rule["title"], "command": command})
                                 if packet[IP].src not in self.report._suspicious_ips:
                                     self.report._suspicious_ips.append(packet[IP].src)
                                 break

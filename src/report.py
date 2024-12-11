@@ -19,7 +19,7 @@ class Report:
         self._suspicious_ips: List = []
         self.path: str = "nids_report.json"
 
-    def add_flow_statistic(self, src_ip: str, dst_ip: str, src_port: int, dst_port: int, protocol: str, src2dst_bytes: int, dst2src_bytes: int, bidirectional_bytes: int, bidirectional_packets: int, bidirectional_duration_ms: int, bidirectional_first_seen_ms: int, bidirectional_last_seen_ms: int) -> None:
+    def add_flow_statistic(self, src_ip: str, dst_ip: str, src_port: int, dst_port: int, protocol: str, src2dst_bytes: int, dst2src_bytes: int, bidirectional_bytes: int, bidirectional_packets: int, bidirectional_duration_ms: int, bidirectional_first_seen_ms: int, bidirectional_last_seen_ms: int, ml_classification: int) -> None:
         flow_statistic = {
             "src_ip": src_ip,
             "dst_ip": dst_ip,
@@ -32,7 +32,8 @@ class Report:
             "bidirectional_packets": bidirectional_packets,
             "bidirectional_duration": bidirectional_duration_ms,
             "bidirectional_first_seen": bidirectional_first_seen_ms,
-            "bidirectional_last_seen": bidirectional_last_seen_ms
+            "bidirectional_last_seen": bidirectional_last_seen_ms,
+            "ml_classification": int(ml_classification)
         }
         self.flow_metadata.append(flow_statistic)
 
@@ -67,13 +68,13 @@ class Report:
         plt.show()
 
     def visualize_ml_tree(self):
-        plt.figure(figsize=(20, 10))
+        plt.figure(figsize=(10, 5))
         plot_tree(self._ml_info["tree_model"], filled=True, feature_names=self._ml_info["X_train"].columns, class_names=["Normal", "Malicious"])
         plt.title("Decision Tree Classifier")
         plt.savefig("ml_tree.png")
         plt.show()
 
-    def visualize_ml_confusion_matrix(self):
+    def visualize_conf_matrix(self):
         plt.figure(figsize=(10, 5))
         plt.title("Confusion Matrix")
         sns.heatmap(self._ml_info["confusion_matrix"], annot=True, fmt="d", cmap="Blues")
@@ -111,9 +112,6 @@ class Report:
         map.add_child(feature_group)
         map.save("threat_map.html")
                 
-
-    def parase_to_md(self):
-        title = f"# Network Report {self.report_id}"
 
     def _ml_readable_info(self):
         return {
