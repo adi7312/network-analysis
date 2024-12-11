@@ -88,6 +88,7 @@ class MLModel():
 
 
 
+
     def _train_model(self, max_depth=3, criterion="gini", min_samples_split=5, min_samples_leaf=2):
         # Requirement ML.1 + ML.2
         X_train, X_test, Y_train, Y_test = self._prepare_data()
@@ -112,5 +113,5 @@ class MLModel():
         self.recall = self.conf_matrix[1][1] / (self.conf_matrix[1][0] + self.conf_matrix[1][1])
         self.precision = self.conf_matrix[1][1] / (self.conf_matrix[0][1] + self.conf_matrix[1][1])
         self.tree_model = tree_model
-        self.X_train = X_train
+        self.X_train = self.X_train + X_train if self.X_train is not None else X_train
 

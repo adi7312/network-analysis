@@ -20,7 +20,7 @@ python3 nids.py --help
 | **D.2**  | Detection as a Code | Must-have    | Done       | Detection with pySigma                                    |
 | **ML.1** | Machine Learning    | Must-have    | Done       | Model - visualisation of learning model                   |
 | **ML.2** | Machine Learning    | Must-have    | Done       | Metrics - FPR, TPR, Confusion Matrix                      |
-| **ML.3** | Machine Learning    | Nice-to-have |            | User can upload new data                                  |
+| **ML.3** | Machine Learning    | Nice-to-have | Done       | User can upload new data                                  |
 | **E.1**  | Enrichment          | Must-have    | Done       | Alert enrichment                                          |
 | **V.1**  | Wizualizacja        | Must-have    | Done       | Visualisaion of detected threats                          |
 | **V.2**  | Wizualizacja        | Nice-to-have | Done       | Localisation visualistaion                                |
