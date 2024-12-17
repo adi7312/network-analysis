@@ -9,6 +9,12 @@ pip install -r requirements.txt
 python3 nids.py --help
 ```
 
+It is required to set VirusTotal API key before running the tool.
+
+```
+export VT_API_KEY=<VT_API_KEY>
+```
+
 
 ---
 
